@@ -1,7 +1,28 @@
-import React from "react";
+import React, { useState } from "react";
 import { Package } from "lucide-react";
+import ReviewModal from "./ReviewModal";
 
-const Orders = ({ orders, setCurrentPage }) => {
+const Orders = ({ orders, setCurrentPage, user }) => {
+  const [reviewingOrder, setReviewingOrder] = useState(null);
+
+  const handleReviewSubmit = async (reviewData) => {
+    try {
+      const response = await fetch("http://localhost:5247/api/Review", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(reviewData),
+      });
+
+      if (!response.ok) {
+        throw new Error("Failed to submit review");
+      }
+
+      return await response.json();
+    } catch (error) {
+      console.error("Error submitting review:", error);
+      throw error;
+    }
+  };
   if (orders.length === 0) {
     return (
       <div className="max-w-2xl mx-auto p-6 text-center">
@@ -70,13 +91,25 @@ const Orders = ({ orders, setCurrentPage }) => {
             </div>
 
             {order.status === "Delivered" && (
-              <button className="mt-4 w-full border-2 border-orange-500 text-orange-500 py-2 rounded-lg font-semibold hover:bg-orange-50">
+              <button 
+                onClick={() => setReviewingOrder(order)}
+                className="mt-4 w-full border-2 border-orange-500 text-orange-500 py-2 rounded-lg font-semibold hover:bg-orange-50"
+              >
                 Leave a Review
               </button>
             )}
           </div>
         ))}
       </div>
+
+      {reviewingOrder && (
+        <ReviewModal
+          order={reviewingOrder}
+          user={user}
+          onClose={() => setReviewingOrder(null)}
+          onSubmit={handleReviewSubmit}
+        />
+      )}
     </div>
   );
 };

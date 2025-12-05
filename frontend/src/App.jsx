@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import Login from "./components/Login";
 import PaymentMethod from "./PaymentMethod";
 import OrderConfirmation from "./OrderConfirmation";
+import Orders from "./components/Orders";
 import logoImage from "./assets/logo.jpg";
 // Temporary minimal app while wiring components
 
@@ -441,65 +442,7 @@ const App = () => {
         )}
 
         {currentPage === "orders" && (
-          <div className="max-w-4xl mx-auto">
-            <h2 className="text-4xl font-bold text-gray-900 mb-8">Your Orders</h2>
-            {orders.length === 0 ? (
-              <div className="bg-white rounded-2xl p-12 text-center shadow-lg">
-                <div className="w-24 h-24 mx-auto bg-green-100 rounded-full flex items-center justify-center mb-4">
-                  <svg className="w-12 h-12 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-                  </svg>
-                </div>
-                <p className="text-xl text-gray-600 mb-6">No orders yet</p>
-                <button 
-                  className="px-6 py-3 bg-gradient-to-r from-green-600 to-emerald-600 text-white font-semibold rounded-xl shadow-md hover:shadow-lg transition-all"
-                  onClick={() => setCurrentPage("menu")}
-                >
-                  Order Now
-                </button>
-              </div>
-            ) : (
-              <div className="space-y-4">
-                {orders.map((o) => (
-                  <div key={o.id} className="bg-white rounded-xl p-6 shadow-md hover:shadow-lg transition-shadow">
-                    <div className="flex items-start justify-between mb-4">
-                      <div>
-                        <div className="font-bold text-xl text-gray-900">Order #{o.id}</div>
-                        <div className="text-sm text-gray-500 mt-1">
-                          {new Date(o.date).toLocaleDateString()} at {new Date(o.date).toLocaleTimeString()}
-                        </div>
-                      </div>
-                      <span className={`px-4 py-2 rounded-full font-semibold text-sm ${
-                        o.status === "Pending" ? "bg-yellow-100 text-yellow-700" :
-                        o.status === "Preparing" ? "bg-blue-100 text-blue-700" :
-                        o.status === "On the way" ? "bg-purple-100 text-purple-700" :
-                        "bg-green-100 text-green-700"
-                      }`}>
-                        {o.status}
-                      </span>
-                    </div>
-                    <div className="border-t border-gray-200 pt-4">
-                      <div className="space-y-2 mb-4">
-                        {o.items.map((item, idx) => (
-                          <div key={idx} className="flex items-center justify-between text-sm">
-                            <span className="text-gray-700">{item.name}</span>
-                            <span className="font-medium">${item.totalPrice.toFixed(2)}</span>
-                          </div>
-                        ))}
-                      </div>
-                      <div className="flex items-center justify-between pt-3 border-t border-gray-200">
-                        <div>
-                          <div className="text-sm text-gray-600">Total Amount</div>
-                          <div className="text-sm text-gray-500 mt-1">Est. {o.estimatedTime}</div>
-                        </div>
-                        <div className="text-2xl font-bold text-green-600">${o.total.toFixed(2)}</div>
-                      </div>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            )}
-          </div>
+          <Orders orders={orders} setCurrentPage={setCurrentPage} user={user} />
         )}
 
         {selectedItem && (
