@@ -6,24 +6,24 @@ namespace FoodOrderingAPI.Services
 {
     public class MongoDBService
     {
-        private readonly IMongoDatabase _database;
+        public IMongoCollection<User> Users { get; }
+        public IMongoCollection<MenuItem> MenuItems { get; }
+        public IMongoCollection<Order> Orders { get; }
+        public IMongoCollection<Review> Reviews { get; }
 
         public MongoDBService(IOptions<MongoDBSettings> settings)
         {
-            var client = new MongoClient(settings.Value.ConnectionString);
-            _database = client.GetDatabase(settings.Value.DatabaseName);
+            var mongoSettings = settings.Value;
+
+            var client = new MongoClient(mongoSettings.ConnectionString);
+            var database = client.GetDatabase(mongoSettings.DatabaseName);
+
+            // Use names from appsettings.json
+            Users = database.GetCollection<User>(mongoSettings.UsersCollectionName);
+            MenuItems = database.GetCollection<MenuItem>(mongoSettings.MenuItemsCollectionName);
+            Orders = database.GetCollection<Order>(mongoSettings.OrdersCollectionName);
+            Reviews = database.GetCollection<Review>(mongoSettings.ReviewsCollectionName);
         }
-
-        public IMongoCollection<User> Users => 
-            _database.GetCollection<User>("Users");
-
-        public IMongoCollection<MenuItem> MenuItems => 
-            _database.GetCollection<MenuItem>("MenuItems");
-
-        public IMongoCollection<Order> Orders => 
-            _database.GetCollection<Order>("Orders");
-
-        public IMongoCollection<Review> Reviews => 
-            _database.GetCollection<Review>("Reviews");
     }
 }
+
